@@ -6,10 +6,10 @@ typedef enum
 {
     Production,
     StubCode
-}testEnvironment_e;
+}testEnvironment;
         
 
-int networkAlertStub(float celcius,testEnvironment_e environment) {
+int networkAlertStub(float celcius,testEnvironment environment) {
     printf("ALERT: Temperature is %.1f celcius.\n", celcius);
     if(Production == environment)
     {
@@ -37,7 +37,7 @@ float computeCelciusValueFromFarenheit(float farenheit)
     return celcius;
 }
 
-void alertInCelcius(float farenheit,testEnvironment_e environment) {
+void alertInCelcius(float farenheit,testEnvironment environment) {
     float celcius = computeCelciusValueFromFarenheit(farenheit);
     int returnCode = networkAlertStub(celcius,environment);
     if (returnCode != 200) {
@@ -54,6 +54,8 @@ int main() {
     assert( alertFailureCount == 0);
     alertInCelcius(400.5,Production);
     assert( alertFailureCount == 1);
+    alertInCelcius(405.5,Production);
+    assert( alertFailureCount == 2);
     
     printf("%d alerts failed.\n", alertFailureCount);
     printf("All is well (maybe!)\n");
