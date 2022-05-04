@@ -33,10 +33,11 @@ int printColorMap() {
 
 ColorPair GetColorFromPairNumber(int pairNumber) {
     ColorPair colorPair;
+    int zeroBasedPairNumber = pairNumber - 1;
     colorPair.majorColorValue = 
-        (enum MajorColor)(pairNumber / numberOfMinorColors);
+        (enum MajorColor)(zeroBasedPairNumber / numberOfMinorColors);
     colorPair.minorColorValue =
-        (enum MinorColor)(pairNumber % numberOfMinorColors);
+        (enum MinorColor)(zeroBasedPairNumber % numberOfMinorColors);
     return colorPair;
 }
 
