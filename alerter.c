@@ -2,37 +2,59 @@
 #include <assert.h>
 
 int alertFailureCount = 0;
+typedef enum
+{
+    Production
+    StubCode
+}testEnvironment_e;
+        
 
-int networkAlertStub(float celcius) {
+int networkAlertStub(float celcius,testEnvironment_e environment) {
     printf("ALERT: Temperature is %.1f celcius.\n", celcius);
-    /* if celisus is less or equal to 200 return ok (200), else return notok(500)*/
-    if( celcius <= 200)
+    if(Production == environment)
     {
-        return 200;
+        /* if celisus is less or equal to 200 return ok (200), else return notok(500)*/
+        if( celcius <= 200)
+        {
+            return 200;
+        }
+        else
+        {
+            return 500;
+        }
     }
     else
     {
-        return 500;
+        /* in case of Stubcode environment always return 200*/
+        return 200;
     }
 }
 
-void alertInCelcius(float farenheit) {
+float computeCelciusValueFromFarenheit(float farenheit)
+{
     float celcius = (farenheit - 32) * 5 / 9;
-    int returnCode = networkAlertStub(celcius);
+    
+    return celcius;
+}
+
+void alertInCelcius(float farenheit,testEnvironment_e environment) {
+    float celcius = computeCelciusValueFromFarenheit(farenheit);
+    int returnCode = networkAlertStub(celcius,environment);
     if (returnCode != 200) {
-        // non-ok response is not an error! Issues happen in life!
-        // let us keep a count of failures to report
-        // However, this code doesn't count failures!
-        // Add a test below to catch this bug. Alter the stub above, if needed.
-        alertFailureCount += 0;
+        alertFailureCount += 1;
     }
 }
 
 int main() {
-    alertInCelcius(400.5);
+    alertInCelcius(303.6,StubCode);
+    assert( alertFailureCount == 0);
+    alertInCelcius(303.6,Production);
+    assert( alertFailureCount == 0);
+    alertInCelcius(400.5,StubCode);
+    assert( alertFailureCount == 0);
+    alertInCelcius(400.5,Production);
     assert( alertFailureCount == 1);
-    alertInCelcius(303.6);
-    assert( alertFailureCount == 1);
+    
     printf("%d alerts failed.\n", alertFailureCount);
     printf("All is well (maybe!)\n");
     return 0;
