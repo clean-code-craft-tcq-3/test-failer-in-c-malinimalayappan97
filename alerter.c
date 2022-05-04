@@ -4,7 +4,7 @@
 int alertFailureCount = 0;
 typedef enum
 {
-    Production
+    Production,
     StubCode
 }testEnvironment_e;
         
